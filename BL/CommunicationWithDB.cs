@@ -8,6 +8,7 @@ using Common;
 
 namespace BL
 {
+    // TODO: this class is pointless. it just calls actionsInDB and does nothing else.
     public class CommunicationWithDB
     {
         private ActionsInDB ActionsInDB { get; set; }

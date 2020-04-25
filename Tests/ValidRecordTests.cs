@@ -17,6 +17,7 @@ namespace Tests
         [TestMethod]
         public void SendOneValidRecord_MoreThanOneInstallment_AddedSuccessfullyToDBAsValid()
         {
+            //TODO: add "Arrange, Act, Assert"
             _recordsToPublish.Add(new RecordToPublish(false));
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
 

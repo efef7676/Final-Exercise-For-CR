@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
+    // TODO: name not clear. is this for the DB or for the Queue?
     public class RecordToPublish
     {
         private static Random _random = new Random();
@@ -15,13 +16,15 @@ namespace Common
         public dynamic PurchaseDate { get; set; }
         public dynamic TotalPrice { get; set; }
         public dynamic Installments { get; set; }
+
+        // TODO: these should not be here.
         public DateTime InsertionDate { get; set; }
         public bool IsValid { get; set; }
         public string WhyInvalid { get; set; }
 
         public RecordToPublish(bool isOneInstallment = true)
         {
-
+            //TODO: ctor too specific. Why only installments passed? 
             StoreId = Generator.GenerateValidStoreId();
             CreditCard = Generator.GenerateValidCreditCard();
             PurchaseDate = Generator.GenerateValidDate(StoreId[1]).ToString(ConfigorationValues.ExpectedDateFormat);

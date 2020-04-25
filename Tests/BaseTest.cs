@@ -11,6 +11,7 @@ namespace Tests
     public class BaseTest
     {
         private Process _process;
+        // TODO: weird name actionsInDB
         protected CommunicationWithDB _actionsInDB;
         protected CommunicationWithRabbitMQ _rabbitMq;
         protected List<RecordToPublish> _recordsToPublish;

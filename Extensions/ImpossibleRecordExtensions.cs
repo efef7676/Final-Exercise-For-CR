@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Extensions
 {
+    // TODO: why not just set values?
     public static class ImpossibleRecordExtensions
     {
         private static Random _random = new Random();

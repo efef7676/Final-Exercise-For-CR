@@ -14,6 +14,7 @@ namespace Common
         public GeneratorForRecords()
         { }
 
+        // TODO: are you sure this generates a valid credit card?
         public string GenerateValidCreditCard()
         {
             var builder = new StringBuilder();
@@ -25,6 +26,7 @@ namespace Common
             return builder.ToString();
         }
 
+        // TODO: refer to RecivedRecord. 
         public double GenerateDoublePrice(bool isOneInstallment)
         {
             if (isOneInstallment)
@@ -35,6 +37,7 @@ namespace Common
             return _random.NextDouble() + _random.Next(int.MaxValue/40);
         }
 
+        // TODO: refer to RecivedRecord. 
         public int GenerateIntegerPrice(bool isOneInstallment)
         {
             if (isOneInstallment)
@@ -47,11 +50,14 @@ namespace Common
 
         public string GenerateValidStoreId()
         {
+            //5 Points! Totachit!
+            // TODO: (But maybe just move it to config)
             Xeger xeger = new Xeger(@"^[A-F][A-D]\d{5}", _random);
 
             return xeger.Generate();
         }
 
+        // TODO: refer to RecivedRecord. 
         public DateTime GenerateValidDate(char activityDays = ' ')
         {
             var start = new DateTime(2000, 1, 1);
@@ -76,8 +82,11 @@ namespace Common
             return date;
         }
 
+        // TODO: why dynamic?
+        // TODO: refer to RecivedRecord. 
         public dynamic GenerateInstallmentsByPrice(bool isOneInstallment, double price)
         {
+            // TODO: why not string array?
             var oneInstallmentOptions = new dynamic[] { "FULL", 1, null};
             if (isOneInstallment)
             {

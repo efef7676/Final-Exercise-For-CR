@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
+    // TODO: name not clear. is this for the DB or for the Queue?
     public class ReceivedRecord
     {
         public string StoreId { get; set; }
@@ -23,6 +24,8 @@ namespace Common
 
         public ReceivedRecord() { }
 
+        // TODO: you are implementing the same business logic as the code you're testing
+        // TODO: this is fundamentally wrong, since you are just comparing your own logic to the actual project.
         public ReceivedRecord(RecordToPublish record)
         {
             StoreId = record.StoreId;

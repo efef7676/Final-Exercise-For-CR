@@ -7,6 +7,7 @@ using System.Configuration;
 
 namespace Common
 {
+    // TODO: typo
     public static class ConfigorationValues
     {
         public static string ConnectionStringDB = ConfigurationManager.AppSettings["CONNECTION_STRING_DB"];

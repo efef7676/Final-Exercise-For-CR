@@ -31,6 +31,7 @@ namespace Assertions
         }
 
         [CustomAssertion]
+        // TODO: change name to notContainsStoreID
         public AndConstraint<ReceivedRecordsAssertions> NotContains(RecordToPublish sentRecord)
         {
             ReceivedRecords.FirstOrDefault(record => record.StoreId == sentRecord.StoreId)

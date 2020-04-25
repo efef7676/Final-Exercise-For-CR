@@ -19,6 +19,7 @@ namespace DAL
             Connection = connection;
         }
 
+
         public List<ReceivedRecord> GetRows(string storeIdValue = "")
         {
             string query;
@@ -39,6 +40,8 @@ namespace DAL
             {
                 var receivedRecord = new ReceivedRecord();
 
+                // TODO: split to more functions. this should be a function called "parse rows"
+                // TODO: move hard coded strings to config
                 receivedRecord.StoreId = dataReader["store_id"].ToString();
                 receivedRecord.StoreType = char.Parse(dataReader["store_type"].ToString());
                 receivedRecord.ActivityDays = char.Parse(dataReader["activity_days"].ToString());
@@ -57,7 +60,8 @@ namespace DAL
             return receivedRecords;
         }
 
-
+        // TODO: typo
+        // TODO: you shouldn't do this in the DAL. you should just get the count.
         public bool IsDBHavaNRecords(int expectedNumberOfRecords)
         {
             string query = "SELECT COUNT(*) FROM purchases";
