@@ -24,7 +24,7 @@ namespace BL
                 using (var channel = connection.CreateModel())
                 {
                     var message = Encoding.UTF8.GetBytes(body);
-                    channel.BasicPublish("", ConfigorationValues.QueueName, null, message);
+                    channel.BasicPublish("", ConfigorationsValues.QueueName, null, message);
                 }
             }
         }

@@ -12,26 +12,27 @@ namespace Assertions
 {
     public class ReceivedRecordsAssertions : ObjectAssertions
     {
-        private List<ReceivedRecord> ReceivedRecords => Subject as List<ReceivedRecord>;
+        private List<ReceivedRecordFromDB> ReceivedRecords => Subject as List<ReceivedRecordFromDB>;
         protected override string Identifier => "ReceivedRecordsAssertions";
 
-        public ReceivedRecordsAssertions(List<ReceivedRecord> value) : base(value)
+        public ReceivedRecordsAssertions(List<ReceivedRecordFromDB> value) : base(value)
         {
         }
 
 
         [CustomAssertion]
-        public AndConstraint<ReceivedRecordsAssertions> BeAddedSuccessfully(List<RecordToPublish> sentRecords)
+        public AndConstraint<ReceivedRecordsAssertions> BeAddedSuccessfully(List<RecordToPublishToQueue> sentRecords)
         {
             ReceivedRecords
+                .AreSameRecords(sentRecords)
                 .Should()
-                .BeEquivalentTo(sentRecords.ConvertToReceivedRecords());
+                .BeTrue();
 
             return new AndConstraint<ReceivedRecordsAssertions>(this);
         }
 
         [CustomAssertion]
-        public AndConstraint<ReceivedRecordsAssertions> NotContains(RecordToPublish sentRecord)
+        public AndConstraint<ReceivedRecordsAssertions> NotContainsStoreID(RecordToPublishToQueue sentRecord)
         {
             ReceivedRecords.FirstOrDefault(record => record.StoreId == sentRecord.StoreId)
                 .Should()

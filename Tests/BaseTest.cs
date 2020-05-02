@@ -11,9 +11,9 @@ namespace Tests
     public class BaseTest
     {
         private Process _process;
-        protected CommunicationWithDB _actionsInDB;
+        protected CommunicationWithDB _communicationWithDB;
         protected CommunicationWithRabbitMQ _rabbitMq;
-        protected List<RecordToPublish> _recordsToPublish;
+        protected List<RecordToPublishToQueue> _recordsToPublish;
 
         [TestInitialize]
         public virtual void TestInitialize()
@@ -28,17 +28,18 @@ namespace Tests
             _process = new Process { StartInfo = startInfo };
             _process.Start();
 
-            _actionsInDB = new CommunicationWithDB();
+            _communicationWithDB = new CommunicationWithDB();
             _rabbitMq = new CommunicationWithRabbitMQ();
-            _recordsToPublish = new List<RecordToPublish>();
-            _actionsInDB.OpenConnection();
-            _actionsInDB.DeleteFromDB();
+            _recordsToPublish = new List<RecordToPublishToQueue>();
+
+            _communicationWithDB.OpenConnection();
+            _communicationWithDB.DeleteFromDB();
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            _actionsInDB.CloseConnection();
+            _communicationWithDB.CloseConnection();
             _process.CloseMainWindow();
         }
     }

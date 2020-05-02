@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class RecordToPublish
+    public class RecordToPublishToQueue
     {
         private static Random _random = new Random();
         public GeneratorForRecords Generator = new GeneratorForRecords();
@@ -19,26 +19,46 @@ namespace Common
         public bool IsValid { get; set; }
         public string WhyInvalid { get; set; }
 
-        public RecordToPublish(bool isOneInstallment = true)
+        public RecordToPublishToQueue()
         {
-
             StoreId = Generator.GenerateValidStoreId();
-            CreditCard = Generator.GenerateValidCreditCard();
-            PurchaseDate = Generator.GenerateValidDate(StoreId[1]).ToString(ConfigorationValues.ExpectedDateFormat);
-            TotalPrice = Generator.GenerateDoublePrice(isOneInstallment);
-            Installments = Generator.GenerateInstallmentsByPrice(isOneInstallment, TotalPrice);
+            CreditCard = "4557446145890236";
+            PurchaseDate = Generator.GenerateValidDate(StoreId[1]).ToString(ConfigorationsValues.ExpectedDateFormat);
+            TotalPrice = Generator.GenerateIntegerPrice(true);
+            Installments = Generator.GenerateInstallmentsByPrice(true, TotalPrice);
             IsValid = true;
             WhyInvalid = null;
             InsertionDate = DateTime.Now.Date;
         }
 
-        public RecordToPublish SetAsImpossibleRecord()
+        public void SetMoreThanOneInstallments()
+        {
+            TotalPrice = Generator.GenerateIntegerPrice(false);
+            Installments = Generator.GenerateInstallmentsByPrice(false, TotalPrice);
+        }
+
+        public override string ToString()
+        {
+            var record = $"{StoreId},{CreditCard},{PurchaseDate},{TotalPrice}";
+
+            if (Installments != null)
+            {
+                record += $",{Installments}" + Environment.NewLine;
+            }
+            else
+            {
+                record += Environment.NewLine;
+            }
+
+            return record;
+        }
+
+        public RecordToPublishToQueue SetAsImpossibleRecord()
         {
             StoreId = $"{_random.Next()}";
             PurchaseDate = Generator.GenerateValidDate();
             TotalPrice = Generator.GenerateValidStoreId();
             Installments = _random.Next(-100, 0);
-            CreditCard = Generator.GenerateValidCreditCard();
 
             return this;
         }
@@ -50,12 +70,12 @@ namespace Common
             StoreId = Convert.ToString(storeId);
         }
 
-        public static List<RecordToPublish> CreateNValidRecordsToPublish(int numberOfRecords)
+        public static List<RecordToPublishToQueue> CreateNValidRecordsToPublish(int numberOfRecords)
         {
-            var records = new List<RecordToPublish>();
+            var records = new List<RecordToPublishToQueue>();
             for (int i = 0; i < numberOfRecords; i++)
             {
-                records.Add(new RecordToPublish(true));
+                records.Add(new RecordToPublishToQueue());
             }
 
             return records;

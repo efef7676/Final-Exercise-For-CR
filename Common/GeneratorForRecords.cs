@@ -11,20 +11,6 @@ namespace Common
     {
         private static Random _random = new Random();
 
-        public GeneratorForRecords()
-        { }
-
-        public string GenerateValidCreditCard()
-        {
-            var builder = new StringBuilder();
-            while (builder.Length < 16)
-            {
-                builder.Append(_random.Next(9).ToString());
-            }
-
-            return builder.ToString();
-        }
-
         public double GenerateDoublePrice(bool isOneInstallment)
         {
             if (isOneInstallment)
@@ -47,7 +33,7 @@ namespace Common
 
         public string GenerateValidStoreId()
         {
-            Xeger xeger = new Xeger(@"^[A-F][A-D]\d{5}", _random);
+            Xeger xeger = new Xeger(ConfigorationsValues.StoreIdFormat, _random);
 
             return xeger.Generate();
         }
@@ -78,7 +64,7 @@ namespace Common
 
         public dynamic GenerateInstallmentsByPrice(bool isOneInstallment, double price)
         {
-            var oneInstallmentOptions = new dynamic[] { "FULL", 1, null};
+            var oneInstallmentOptions = new string[] {"FULL", "1", null};
             if (isOneInstallment)
             {
                 return oneInstallmentOptions[_random.Next(oneInstallmentOptions.Length)];

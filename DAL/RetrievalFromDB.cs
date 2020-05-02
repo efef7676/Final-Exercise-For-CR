@@ -19,10 +19,10 @@ namespace DAL
             Connection = connection;
         }
 
-        public List<ReceivedRecord> GetRows(string storeIdValue = "")
+        public List<ReceivedRecordFromDB> GetRows(string storeIdValue = "")
         {
             string query;
-            var receivedRecords = new List<ReceivedRecord>();
+            var receivedRecords = new List<ReceivedRecordFromDB>();
 
             if (String.IsNullOrEmpty(storeIdValue))
             {
@@ -37,34 +37,38 @@ namespace DAL
 
             while (dataReader.Read())
             {
-                var receivedRecord = new ReceivedRecord();
-
-                receivedRecord.StoreId = dataReader["store_id"].ToString();
-                receivedRecord.StoreType = char.Parse(dataReader["store_type"].ToString());
-                receivedRecord.ActivityDays = char.Parse(dataReader["activity_days"].ToString());
-                receivedRecord.CreditCard = dataReader["credit_card"].ToString();
-                receivedRecord.PurchaseDate = DateTime.Parse(dataReader["purchase_date"].ToString());
-                receivedRecord.InsertionDate = DateTime.Parse(dataReader["insertion_date"].ToString());
-                receivedRecord.TotalPrice = double.Parse(dataReader["total_price"].ToString());
-                receivedRecord.Installments = int.Parse(dataReader["installments"].ToString());
-                receivedRecord.PricePerInstallment = double.Parse(dataReader["price_per_installment"].ToString());
-                receivedRecord.IsValid = dataReader["is_valid"].ToString() == "1" ? true : false;
-                receivedRecord.WhyInvalid = dataReader["why invalid"].ToString();
-
-                receivedRecords.Add(receivedRecord);
+                receivedRecords.Add(ParseRows(dataReader));
             }
 
             return receivedRecords;
         }
 
+        private ReceivedRecordFromDB ParseRows(MySqlDataReader dataReader)
+        {
+            var receivedRecord = new ReceivedRecordFromDB();
 
-        public bool IsDBHavaNRecords(int expectedNumberOfRecords)
+            receivedRecord.StoreId = dataReader[ConfigorationsValues.StoreIdField].ToString();
+            receivedRecord.StoreType = char.Parse(dataReader[ConfigorationsValues.StoreTypeField].ToString());
+            receivedRecord.ActivityDays = char.Parse(dataReader[ConfigorationsValues.ActivityDaysField].ToString());
+            receivedRecord.CreditCard = dataReader[ConfigorationsValues.CreditCardField].ToString();
+            receivedRecord.PurchaseDate = DateTime.Parse(dataReader[ConfigorationsValues.PurchaseDateField].ToString());
+            receivedRecord.InsertionDate = DateTime.Parse(dataReader[ConfigorationsValues.InsertionDateField].ToString());
+            receivedRecord.TotalPrice = double.Parse(dataReader[ConfigorationsValues.TotalPriceField].ToString());
+            receivedRecord.Installments = int.Parse(dataReader[ConfigorationsValues.InstallmentsField].ToString());
+            receivedRecord.PricePerInstallment = double.Parse(dataReader[ConfigorationsValues.PricePerInstallmentField].ToString());
+            receivedRecord.IsValid = dataReader[ConfigorationsValues.IsValidField].ToString() == "1" ? true : false;
+            receivedRecord.WhyInvalid = dataReader[ConfigorationsValues.WhyInvalidField].ToString();
+
+            return receivedRecord;
+        }
+
+        public int CountRows()
         {
             string query = "SELECT COUNT(*) FROM purchases";
-            var receivedRecords = new List<ReceivedRecord>();
+            var receivedRecords = new List<ReceivedRecordFromDB>();
             var cmd = new MySqlCommand(query, Connection);
 
-            return Convert.ToInt32(cmd.ExecuteScalar()) == expectedNumberOfRecords;
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
     }
 

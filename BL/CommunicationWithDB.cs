@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL;
 using Common;
+using System.Diagnostics;
 
 namespace BL
 {
@@ -13,7 +14,6 @@ namespace BL
         private ActionsInDB ActionsInDB { get; set; }
         public void OpenConnection() => ActionsInDB.OpenConnection();
         public void CloseConnection() => ActionsInDB.CloseConnection();
-        public void WaitUntilNRowsInDB(int expectedNumberOfRows) => ActionsInDB.WaitUntilAmountOfRowsIsUpdate(expectedNumberOfRows);
 
         public CommunicationWithDB()
         {
@@ -25,9 +25,24 @@ namespace BL
             ActionsInDB.ManipulationInDB.DeleteAllRows();
         }
 
-        public List<ReceivedRecord> GetFromDB(string storeIdValue = "")
+        public List<ReceivedRecordFromDB> GetFromDB(string storeIdValue = "")
         {
             return ActionsInDB.RetrievalFromDB.GetRows(storeIdValue);
+        }
+
+        public void WaitUntilAmountOfRowsIsUpdate(int expectedNumberOfRows)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var isEqual = ActionsInDB.RetrievalFromDB.CountRows() == expectedNumberOfRows;
+            while (!isEqual)
+            {
+                isEqual = ActionsInDB.RetrievalFromDB.CountRows() == expectedNumberOfRows;
+                if (sw.ElapsedMilliseconds > 7000)
+                    throw new TimeoutException();
+            }
+           
+            return;
         }
     }
 }

@@ -15,40 +15,57 @@ namespace Tests
     public class ValidRecordTests : BaseTest
     {
         [TestMethod]
-        public void SendOneValidRecord_MoreThanOneInstallment_AddedSuccessfullyToDBAsValid()
+        public void SendOneValidRecordToFullDB_MoreThanOneInstallment_AddedSuccessfullyToDBAsValid()
         {
-            _recordsToPublish.Add(new RecordToPublish(false));
+            //Arrange
+            _rabbitMq.PublishMessage(new List<RecordToPublishToQueue>() { new RecordToPublishToQueue() }.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
+
+            var recordToPublish = new RecordToPublishToQueue();
+            recordToPublish.SetMoreThanOneInstallments();
+            _recordsToPublish.Add(recordToPublish);
+
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(_recordsToPublish.Count + 1);
 
-            _actionsInDB.WaitUntilNRowsInDB(_recordsToPublish.Count);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB(_recordsToPublish[0].StoreId)
                 .Should()
                 .BeAddedSuccessfully(_recordsToPublish);
         }
 
         [TestMethod]
-        public void SendOneValidRecord_OneInstallment_AddedSuccessfullyToDBAsValid()
+        public void SendOneValidRecordToFullDB_OneInstallment_AddedSuccessfullyToDBAsValid()
         {
-            _recordsToPublish.Add(new RecordToPublish());
+            //Arrange
+            _rabbitMq.PublishMessage(new List<RecordToPublishToQueue>() { new RecordToPublishToQueue() }.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
+
+            _recordsToPublish.Add(new RecordToPublishToQueue());
+            
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(_recordsToPublish.Count + 1);
 
-            _actionsInDB.WaitUntilNRowsInDB(_recordsToPublish.Count);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB(_recordsToPublish[0].StoreId)
                 .Should()
                 .BeAddedSuccessfully(_recordsToPublish);
         }
+
         [TestMethod]
         public void SendFewValidRecords_AddedSuccessfullyToDBAsValid()
         {
-            _recordsToPublish.AddRange(RecordToPublish.CreateNValidRecordsToPublish(3));
+            //Arrange
+            _recordsToPublish.AddRange(RecordToPublishToQueue.CreateNValidRecordsToPublish(20));
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(_recordsToPublish.Count);
 
-            _actionsInDB.WaitUntilNRowsInDB(_recordsToPublish.Count);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
                 .BeAddedSuccessfully(_recordsToPublish);
         }
@@ -56,13 +73,16 @@ namespace Tests
         [TestMethod]
         public void SendSameValidRecords_AddedSuccessfullyToDBAsValid()
         {
-            var recordToPublish = new RecordToPublish();
+            //Arrange
+            var recordToPublish = new RecordToPublishToQueue();
             _recordsToPublish.AddMany(recordToPublish, recordToPublish);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
-            _actionsInDB.WaitUntilNRowsInDB(_recordsToPublish.Count);
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(_recordsToPublish.Count);
 
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
                 .BeAddedSuccessfully(_recordsToPublish);
         }
@@ -70,16 +90,19 @@ namespace Tests
         [TestMethod]
         public void ValidRecordAndImpossibleRecord_ValidRecordAddedSuccessfullyToDB()
         {
-            var validRecord = new RecordToPublish();
-            var impossibleRecord = new RecordToPublish().SetAsImpossibleRecord();
-            _recordsToPublish.AddMany(validRecord, impossibleRecord);
+            //Arrange
+            var validRecord = new RecordToPublishToQueue();
+            var impossibleRecord = new RecordToPublishToQueue().SetAsImpossibleRecord();
+            _recordsToPublish.AddMany(impossibleRecord, validRecord);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
-            _actionsInDB.WaitUntilNRowsInDB(1);
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
-                .BeAddedSuccessfully(new List<RecordToPublish>() { validRecord });
+                .BeAddedSuccessfully(new List<RecordToPublishToQueue>() { validRecord });
         }
     }
 }

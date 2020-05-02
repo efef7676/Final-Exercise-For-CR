@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Extensions
 {
-    public static class DateTimeExtensions
+    public static class GeneralExtensions
     {
         public static string ConvertByExpectedDateFormat(this DateTime date) =>
-            date.ToString(ConfigorationValues.ExpectedDateFormat);
+            date.ToString(ConfigorationsValues.ExpectedDateFormat);
     }
 }

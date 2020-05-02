@@ -11,90 +11,99 @@ namespace Tests
     [TestClass]
     public class ImpossibleRecordTests : BaseTest
     {
-        private RecordToPublish _baseRecord;
-        private RecordToPublish _validRecordForReview;
+        private RecordToPublishToQueue _baseRecord;
 
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            _recordsToPublish.Add(new RecordToPublish());
-            _baseRecord = new RecordToPublish();
+            _recordsToPublish.Add(new RecordToPublishToQueue());
+            _baseRecord = new RecordToPublishToQueue();
         }
 
         [TestMethod]
         public void SendRecord_PurchaseDateInUnexpectedFormat_WillNotAddToDB()
         {
-            _baseRecord.SetPurchaseDateInUnexpectedFormat("dd-MM-yyyy");
+            //Arrange
+            _baseRecord.SetPurchaseDateInUnexpectedFormat("yyyy.MM.dd");
             _recordsToPublish.Add(_baseRecord);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.WaitUntilNRowsInDB(1);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
-                .NotContains(_baseRecord);
+                .NotContainsStoreID(_baseRecord);
         }
 
         [TestMethod]
-        public void SendRecord_ImpossiblePurchaseDate_WillNotAddToDB(string dateFormat)
+        public void SendRecord_ImpossiblePurchaseDate_WillNotAddToDB()
         {
+            //Arrange
             _baseRecord.SetImpossiblePurchaseDate();
             _recordsToPublish.Add(_baseRecord);
-
+            
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.WaitUntilNRowsInDB(1);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
-                .NotContains(_baseRecord);
+                .NotContainsStoreID(_baseRecord);
         }
 
         [TestMethod]
         public void SendRecord_ImpossibleStoreId_WillNotAddToDB()
         {
-            _baseRecord.SetInvalidStoreID();
+            //Arrange
+            _baseRecord.SetImpossibleStoreID();
             _recordsToPublish.Add(_baseRecord);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.WaitUntilNRowsInDB(1);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                 .Should()
-                .NotContains(_baseRecord);
+                .NotContainsStoreID(_baseRecord);
         }
 
         [TestMethod]
         public void SendRecord_ImpossiblePrice_WillNotAddToDB()
         {
+            //Arrange
             _baseRecord.SetImpossibleTotalPrice();
             _recordsToPublish.Add(_baseRecord);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.WaitUntilNRowsInDB(1);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                  .Should()
-                 .NotContains(_baseRecord);
+                 .NotContainsStoreID(_baseRecord);
         }
 
         [TestMethod]
         public void SendRecord_ImpossibleInstallments_WillNotAddToDB()
         {
+            //Arrange
             _baseRecord.SetImpossibleInstallments();
             _recordsToPublish.Add(_baseRecord);
 
+            //Act
             _rabbitMq.PublishMessage(_recordsToPublish.ConvertToString());
+            _communicationWithDB.WaitUntilAmountOfRowsIsUpdate(1);
 
-            _actionsInDB.WaitUntilNRowsInDB(1);
-
-            _actionsInDB.GetFromDB()
+            //Assert
+            _communicationWithDB.GetFromDB()
                  .Should()
-                 .NotContains(_baseRecord);
+                 .NotContainsStoreID(_baseRecord);
         }
         
     }

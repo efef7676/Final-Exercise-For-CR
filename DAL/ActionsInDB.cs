@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using Common;
+using System.Diagnostics;
 
 namespace DAL
 {
@@ -18,25 +19,9 @@ namespace DAL
 
         public ActionsInDB()
         {
-            Connection = new MySqlConnection(ConfigorationValues.ConnectionStringDB);
+            Connection = new MySqlConnection(ConfigorationsValues.ConnectionStringDB);
             ManipulationInDB = new ManipulationInDB(Connection);
             RetrievalFromDB = new RetrievalFromDB(Connection);
-        }
-
-        public void WaitUntilAmountOfRowsIsUpdate(int expectedNumberOfRows)
-        {
-            var isAmountOfRowsEqual = RetrievalFromDB.IsDBHavaNRecords(expectedNumberOfRows);
-            while (!isAmountOfRowsEqual)
-            {
-                isAmountOfRowsEqual = RetrievalFromDB.IsDBHavaNRecords(expectedNumberOfRows);
-            }
-            return;
-
-            //while (!RetrievalFromDB.IsDBHavaNRecords(expectedNumberOfRows))
-            //{
-            //    continue;
-            //}
-            //return;
         }
     }
 }

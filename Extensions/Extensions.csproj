@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="GeneralExtensions.cs" />
     <Compile Include="ImpossibleRecordExtensions.cs" />
     <Compile Include="InvalidRecordExtensions.cs" />
     <Compile Include="ListExtensions.cs" />

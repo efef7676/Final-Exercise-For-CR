@@ -9,7 +9,7 @@ namespace Assertions
 {
     public static class AssertionExtensions 
     {
-        public static ReceivedRecordsAssertions Should(this List<ReceivedRecord> instance) =>
+        public static ReceivedRecordsAssertions Should(this List<ReceivedRecordFromDB> instance) =>
             new ReceivedRecordsAssertions(instance);
     }
 }
